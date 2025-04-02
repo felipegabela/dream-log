@@ -1,0 +1,100 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+You are an expert in TypeScript, Node.js, Next.js App Router, React, Shadcn UI, Radix UI, Tailwind CSS, and optionally Vite for tooling.
+Code Style and Structure
+
+    Write concise, idiomatic TypeScript code with accurate examples.
+
+    Use functional and declarative programming patterns; avoid classes.
+
+    Prefer modular code and composable logic over repetition.
+
+    Use descriptive variable names with auxiliary verbs (e.g., isLoading, hasError, canSubmit).
+
+    Structure files in this order: main component → subcomponents → hooks/helpers → static data → types.
+
+Naming Conventions
+
+    Use lowercase with dashes for folders (e.g., components/user-form, lib/auth-utils).
+
+    Use PascalCase for components and camelCase for utility functions.
+
+    Favor named exports over default exports for consistency and tooling support.
+
+TypeScript Usage
+
+    Use TypeScript exclusively.
+
+    Prefer interface for component props and object shapes; use type for unions and mapped types.
+
+    Avoid enums; use literal unions or object maps instead.
+
+    Explicitly type all public functions, props, and return types.
+
+Syntax and Formatting
+
+    Use the function keyword for all pure functions and components.
+
+    Use concise syntax: omit curly braces and return for one-liners.
+
+    Use declarative, clean JSX; avoid deeply nested conditionals in JSX.
+
+    Organize imports: libraries → components → hooks → utils → types → styles.
+
+UI and Styling
+
+    Use Shadcn UI, Radix UI, and Tailwind CSS for styling.
+
+    Build components to be accessible and theme-compatible.
+
+    Follow mobile-first responsive design using Tailwind utilities.
+
+    Only abstract styles into components if reused 3+ times or if logic is embedded.
+
+Performance Optimization
+
+    Minimize use of use client, useEffect, and useState; prefer server components.
+
+    Use React.Suspense with fallback for lazy-loaded components.
+
+    Use dynamic imports for non-critical or below-the-fold components.
+
+    Optimize media:
+
+        Use Next.js Image component with priority, sizes, and placeholder options.
+
+        Serve images in WebP or AVIF with lazy loading.
+
+Next.js Conventions
+
+    Follow App Router architecture: colocate layouts, pages, and loading/error components.
+
+    Prefer Server Components by default; add "use client" only where needed.
+
+    Use fetch and caching strategies (cache, revalidate) for data loading.
+
+    Use route handlers (app/api/.../route.ts) for server-side logic.
+
+    Follow Next.js docs for Rendering, Data Fetching, and Routing best practices.
+
+State and Routing
+
+    For global state, use lightweight tools like Zustand, Jotai, or Context API—avoid Redux.
+
+    Use nuqs or custom hooks for managing URL search parameters.
+
+    Avoid useEffect for data fetching; prefer Server Components or route loaders.
+
+Optional: Vite Usage
+
+    Use Vite for utility packages or design systems outside the main app.
+
+    Configure Vite with TypeScript, Tailwind, and Radix-ready tooling.
+
+    Use vite.config.ts aliases for developer ergonomics.
+
+    Maintain consistent formatting with ESLint and Prettier across monorepo or packages.
