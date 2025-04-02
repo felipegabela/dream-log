@@ -40,9 +40,42 @@ A modern dream journaling application built with Next.js, TypeScript, and Tailwi
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Contributing
+## Development Workflows
 
-We welcome contributions! Here's how you can help:
+### Solo Development (Early Stage)
+
+When working alone on the project in its early stages:
+
+1. **Direct Development on Main**
+   ```bash
+   # Make changes and commit frequently
+   git add .
+   git commit -m "Description of changes"
+   git push origin main
+   ```
+
+2. **CI Protection**
+   - CI pipeline runs on every push to main
+   - If CI fails:
+     - Code remains in the remote main branch
+     - Branch is marked as "failing checks"
+     - Vercel will not deploy the changes
+     - You can push new commits to fix the issues
+   - If CI passes:
+     - Branch is marked as "passing checks"
+     - Vercel automatically deploys the changes
+
+3. **Best Practices**
+   - Make small, focused commits
+   - Write clear commit messages
+   - Run tests locally before pushing
+   - Keep the main branch deployable
+   - Monitor CI status in GitHub Actions
+   - Fix failing checks promptly
+
+### Team Development (Later Stage)
+
+When the project has multiple contributors:
 
 1. Fork the repository
 2. Create a feature branch:
@@ -65,32 +98,23 @@ We welcome contributions! Here's how you can help:
    ```
 7. Open a Pull Request against the main branch
 
-### Development Workflow
+### Development Guidelines
 
-1. **Fork the Repository**
-   - Go to the repository on GitHub
-   - Click the "Fork" button in the top right
-   - Clone your fork locally
-
-2. **Create a Feature Branch**
-   - Always create a new branch for each feature/fix
-   - Use descriptive branch names (e.g., `feature/add-dream-search`, `fix/button-styling`)
-
-3. **Make Changes**
+1. **Code Quality**
    - Write clean, documented code
    - Add tests for new features
    - Update documentation as needed
+   - Follow TypeScript best practices
 
-4. **Submit a Pull Request**
-   - Push your branch to your fork
-   - Create a PR against the main branch
-   - Provide a clear description of your changes
-   - Link any related issues
+2. **Testing**
+   - Run tests before committing
+   - Add tests for new features
+   - Maintain test coverage
 
-5. **Code Review**
-   - Address any review comments
-   - Ensure CI checks pass
-   - Get approval from maintainers
+3. **Documentation**
+   - Update README for new features
+   - Document API changes
+   - Keep comments up to date
 
 ## Testing
 
