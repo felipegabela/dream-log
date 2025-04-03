@@ -7,7 +7,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { Sparkles, Moon, Wand2 } from "lucide-react"
+import { Sparkles, Moon, Wand2, ArrowLeft } from "lucide-react"
+import Link from "next/link"
 
 interface Dream {
   id: string
@@ -17,46 +18,74 @@ interface Dream {
   theme: string
 }
 
-export default function AddDream() {
-  const [dreams, setDreams] = useState<Dream[]>([])
-  const [content, setContent] = useState("")
-  const [emotions, setEmotions] = useState("")
-  const [theme, setTheme] = useState("")
+function hashEmotionToColor(emotion: string): string {
+  let hash = 0
+  for (let i = 0; i < emotion.length; i++) {
+    hash = emotion.charCodeAt(i) + ((hash << 5) - hash)
+  }
+  const hue = Math.abs(hash) % 360
+  return `hsl(${hue}, 70%, 60%)`
+}
+
+export default function EditDreamPage({ params }: { params: { id: string } }) {
+  const [dream, setDream] = useState<Dream | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
     const storedDreams = localStorage.getItem("dreams")
     if (storedDreams) {
-      setDreams(JSON.parse(storedDreams))
+      const dreams = JSON.parse(storedDreams)
+      const foundDream = dreams.find((d: Dream) => d.id === params.id)
+      if (foundDream) {
+        setDream(foundDream)
+      }
     }
-  }, [])
+  }, [params.id])
 
-  const addDream = async () => {
-    if (content && emotions && theme) {
+  const handleSave = async () => {
+    if (dream) {
       setIsSubmitting(true)
       // Simulate a brief delay for a better UX
       await new Promise(resolve => setTimeout(resolve, 500))
       
-      const newDream: Dream = {
-        id: Date.now().toString(),
-        date: new Date().toLocaleDateString(),
-        content,
-        emotions: emotions.split(",").map((e) => e.trim()),
-        theme,
+      const storedDreams = localStorage.getItem("dreams")
+      if (storedDreams) {
+        const dreams = JSON.parse(storedDreams)
+        const updatedDreams = dreams.map((d: Dream) =>
+          d.id === dream.id ? dream : d
+        )
+        localStorage.setItem("dreams", JSON.stringify(updatedDreams))
       }
-      const updatedDreams = [...dreams, newDream]
-      setDreams(updatedDreams)
-      localStorage.setItem("dreams", JSON.stringify(updatedDreams))
-      router.push("/")
+      router.push(`/dream/${dream.id}`)
     }
+  }
+
+  if (!dream) {
+    return (
+      <div className="container mx-auto p-4">
+        <div className="flex justify-between items-center mb-6">
+          <Link href={`/dream/${params.id}`}>
+            <Button variant="ghost" className="group">
+              <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
+              Back to Dream
+            </Button>
+          </Link>
+        </div>
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-center text-muted-foreground">Dream not found</p>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (
     <div className="container mx-auto p-4 max-w-2xl">
       <div className="flex items-center space-x-2 mb-8">
         <Moon className="h-6 w-6 text-primary" />
-        <h1 className="text-3xl font-bold">Record Your Dream</h1>
+        <h1 className="text-3xl font-bold">Edit Your Dream</h1>
       </div>
 
       <Card className="relative overflow-hidden group">
@@ -64,10 +93,10 @@ export default function AddDream() {
         <CardHeader className="relative z-10">
           <CardTitle className="flex items-center space-x-2">
             <Sparkles className="h-5 w-5 text-primary" />
-            <span>Capture Your Dream</span>
+            <span>Refine Your Dream</span>
           </CardTitle>
           <CardDescription>
-            Like stars in the night sky, every dream is unique. Take a moment to record yours.
+            Like polishing a gem, take a moment to perfect your dream&apos;s details.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6 relative z-10">
@@ -79,8 +108,8 @@ export default function AddDream() {
             <Input
               id="theme"
               placeholder="e.g., Flying, Falling, Being Chased"
-              value={theme}
-              onChange={(e) => setTheme(e.target.value)}
+              value={dream.theme}
+              onChange={(e) => setDream({ ...dream, theme: e.target.value })}
               className="transition-all duration-300 focus:ring-2 focus:ring-primary/20"
             />
           </div>
@@ -92,8 +121,8 @@ export default function AddDream() {
             <Input
               id="emotions"
               placeholder="e.g., Fear, Joy, Confusion (separate with commas)"
-              value={emotions}
-              onChange={(e) => setEmotions(e.target.value)}
+              value={dream.emotions.join(", ")}
+              onChange={(e) => setDream({ ...dream, emotions: e.target.value.split(",").map(e => e.trim()) })}
               className="transition-all duration-300 focus:ring-2 focus:ring-primary/20"
             />
           </div>
@@ -106,27 +135,33 @@ export default function AddDream() {
               id="content"
               placeholder="Describe your dream in detail... Let your thoughts flow like a gentle stream."
               className="min-h-[200px] transition-all duration-300 focus:ring-2 focus:ring-primary/20"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
+              value={dream.content}
+              onChange={(e) => setDream({ ...dream, content: e.target.value })}
             />
           </div>
         </CardContent>
-        <CardFooter className="relative z-10">
+        <CardFooter className="flex justify-between relative z-10">
+          <Link href={`/dream/${dream.id}`}>
+            <Button variant="outline" className="group">
+              <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
+              Cancel
+            </Button>
+          </Link>
           <Button 
-            onClick={addDream} 
-            className="w-full group relative overflow-hidden"
+            onClick={handleSave} 
+            className="group relative overflow-hidden"
             disabled={isSubmitting}
           >
             <span className="relative z-10 flex items-center justify-center">
               {isSubmitting ? (
                 <>
                   <Sparkles className="h-5 w-5 mr-2 animate-spin" />
-                  Saving Your Dream...
+                  Saving Changes...
                 </>
               ) : (
                 <>
                   <Sparkles className="h-5 w-5 mr-2 transition-transform group-hover:rotate-12" />
-                  Save Dream
+                  Save Changes
                 </>
               )}
             </span>
