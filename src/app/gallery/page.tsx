@@ -4,8 +4,6 @@ import { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Home, PlusCircle } from "lucide-react"
 
 interface Dream {
   id: string
@@ -33,16 +31,15 @@ function getGradientForEmotions(emotions: string[]): string {
 }
 
 function DreamTile({ dream }: { dream: Dream }) {
-  const gradient = getGradientForEmotions(dream.emotions)
   return (
     <Link href={`/dream/${dream.id}`}>
       <div
-        className="w-full aspect-square rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-300"
-        style={{ background: gradient }}
+        className="rounded-lg p-4 text-white shadow-md h-40 flex flex-col justify-between cursor-pointer hover:shadow-lg transition-shadow duration-200"
+        style={{ background: getGradientForEmotions(dream.emotions) }}
       >
-        <div className="w-full h-full p-4 bg-black bg-opacity-30 flex flex-col justify-end">
-          <h3 className="text-white font-semibold mb-1">{dream.theme}</h3>
-          <p className="text-white text-sm">{dream.date}</p>
+        <div>
+          <h3 className="font-bold">{dream.theme}</h3>
+          <p className="text-sm opacity-80">{dream.date}</p>
         </div>
       </div>
     </Link>
@@ -68,44 +65,21 @@ export default function DreamGallery() {
 
   return (
     <div className="container mx-auto p-4">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Dream Gallery</h1>
-        <div className="space-x-2">
-          <Link href="/add-dream">
-            <Button variant="outline">
-              <PlusCircle className="mr-2 h-4 w-4" /> Add Dream
-            </Button>
-          </Link>
-          <Link href="/">
-            <Button variant="outline">
-              <Home className="mr-2 h-4 w-4" /> Home
-            </Button>
-          </Link>
-        </div>
-      </div>
-
       <div className="mb-6">
         <Label htmlFor="search">Search Dreams</Label>
         <Input
           id="search"
+          placeholder="Search by theme or emotion..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search by theme or emotion..."
         />
       </div>
 
-      {filteredDreams.length === 0 ? (
-        <div className="flex flex-col items-center justify-center min-h-[200px] text-muted-foreground">
-          <p className="text-lg">No dreams found matching your search.</p>
-          <p className="text-sm mt-2">Try adjusting your search terms.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {filteredDreams.map((dream) => (
-            <DreamTile key={dream.id} dream={dream} />
-          ))}
-        </div>
-      )}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {filteredDreams.map((dream) => (
+          <DreamTile key={dream.id} dream={dream} />
+        ))}
+      </div>
     </div>
   )
 } 
