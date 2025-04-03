@@ -18,6 +18,15 @@ interface Dream {
   theme: string
 }
 
+function hashEmotionToColor(emotion: string): string {
+  let hash = 0
+  for (let i = 0; i < emotion.length; i++) {
+    hash = emotion.charCodeAt(i) + ((hash << 5) - hash)
+  }
+  const hue = Math.abs(hash) % 360
+  return `hsl(${hue}, 70%, 60%)`
+}
+
 export default function DreamPage({ params }: { params: { id: string } }) {
   const [dream, setDream] = useState<Dream | null>(null)
   const [isEditing, setIsEditing] = useState(false)
@@ -60,12 +69,6 @@ export default function DreamPage({ params }: { params: { id: string } }) {
     return (
       <div className="container mx-auto p-4">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Dream Not Found</h1>
-          <Link href="/">
-            <Button variant="outline">
-              <Home className="mr-2 h-4 w-4" /> Home
-            </Button>
-          </Link>
         </div>
       </div>
     )
@@ -74,12 +77,6 @@ export default function DreamPage({ params }: { params: { id: string } }) {
   return (
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Dream Details</h1>
-        <Link href="/">
-          <Button variant="outline">
-            <Home className="mr-2 h-4 w-4" /> Home
-          </Button>
-        </Link>
       </div>
 
       <Card>
@@ -143,7 +140,8 @@ export default function DreamPage({ params }: { params: { id: string } }) {
                   {dream.emotions.map((emotion) => (
                     <span
                       key={emotion}
-                      className="px-2 py-1 bg-secondary text-secondary-foreground rounded-md text-sm"
+                      className="px-2 py-1 rounded-md text-sm text-white"
+                      style={{ backgroundColor: hashEmotionToColor(emotion) }}
                     >
                       {emotion}
                     </span>

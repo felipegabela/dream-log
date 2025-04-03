@@ -2,10 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Grid, PlusCircle } from "lucide-react"
 
 interface Dream {
   id: string
@@ -13,6 +10,15 @@ interface Dream {
   content: string
   emotions: string[]
   theme: string
+}
+
+function hashEmotionToColor(emotion: string): string {
+  let hash = 0
+  for (let i = 0; i < emotion.length; i++) {
+    hash = emotion.charCodeAt(i) + ((hash << 5) - hash)
+  }
+  const hue = Math.abs(hash) % 360
+  return `hsl(${hue}, 70%, 60%)`
 }
 
 export default function DreamJournal() {
@@ -27,22 +33,6 @@ export default function DreamJournal() {
 
   return (
     <div className="container mx-auto p-4">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Dream Journal</h1>
-        <div className="space-x-2">
-          <Link href="/add-dream">
-            <Button variant="outline">
-              <PlusCircle className="mr-2 h-4 w-4" /> Add Dream
-            </Button>
-          </Link>
-          <Link href="/gallery">
-            <Button variant="outline">
-              <Grid className="mr-2 h-4 w-4" /> Gallery
-            </Button>
-          </Link>
-        </div>
-      </div>
-
       <div className="space-y-4">
         {dreams.map((dream) => (
           <Link key={dream.id} href={`/dream/${dream.id}`}>
@@ -55,9 +45,13 @@ export default function DreamJournal() {
                 <p className="line-clamp-2">{dream.content}</p>
                 <div className="mt-2">
                   {dream.emotions.map((emotion) => (
-                    <Badge key={emotion} variant="secondary" className="mr-1">
+                    <span
+                      key={emotion}
+                      className="px-2 py-1 rounded-md text-sm text-white mr-1"
+                      style={{ backgroundColor: hashEmotionToColor(emotion) }}
+                    >
                       {emotion}
-                    </Badge>
+                    </span>
                   ))}
                 </div>
               </CardContent>
